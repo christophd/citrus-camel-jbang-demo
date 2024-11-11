@@ -1,0 +1,34 @@
+name: platform-http-server-test
+description: Sample test in YAML
+variables:
+  - name: username
+    value: Christoph
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "platform-http-server"
+            file: "PlatformHttpServer.java"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        GET:
+          path: "/hello"
+          parameters:
+            - name: "name"
+              value: "${username}"
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "200"
+          reasonPhrase: "OK"
+          contentType: "text/plain;charset=UTF-8"
+          body:
+            data: "Hello ${username}"
+finally:
+  - camel:
+      jbang:
+        stop:
+          integration: "platform-http-server"

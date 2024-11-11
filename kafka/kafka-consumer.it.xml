@@ -1,0 +1,46 @@
+<test name="kafka-consumer-test" xmlns="http://citrusframework.org/schema/xml/testcase"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://citrusframework.org/schema/xml/testcase http://citrusframework.org/schema/xml/testcase/citrus-testcase.xsd">
+  <description>Sample test in XML</description>
+
+  <variables>
+    <variable name="key" value="citrus:randomNumber(4)" />
+    <variable name="message" value="Hello Kafka" />
+  </variables>
+
+  <actions>
+    <testcontainers>
+      <start>
+        <kafka auto-remove="true"/>
+      </start>
+    </testcontainers>
+
+    <camel>
+      <jbang>
+        <run auto-remove="true">
+          <integration name="kafka-consumer" file="KafkaConsumer.java">
+            <system-properties file="application.properties"/>
+          </integration>
+        </run>
+      </jbang>
+    </camel>
+
+    <send endpoint="kafka:demo-topic?server=${CITRUS_TESTCONTAINERS_KAFKA_BOOTSTRAP_SERVERS}">
+      <message>
+        <headers>
+          <header name="messageId" value="${key}"/>
+          <header name="citrus_kafka_messageKey" value="${key}"/>
+        </headers>
+        <body>
+          <data>${message}</data>
+        </body>
+      </message>
+    </send>
+
+    <camel>
+      <jbang>
+        <verify integration="kafka-consumer" log-message="${message}"/>
+      </jbang>
+    </camel>
+  </actions>
+</test>

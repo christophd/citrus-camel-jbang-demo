@@ -1,0 +1,37 @@
+<test name="platform-http-server-test" xmlns="http://citrusframework.org/schema/xml/testcase"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://citrusframework.org/schema/xml/testcase http://citrusframework.org/schema/xml/testcase/citrus-testcase.xsd">
+  <description>Sample test in XML</description>
+
+  <variables>
+    <variable name="username" value="Christoph" />
+  </variables>
+
+  <actions>
+    <camel>
+      <jbang>
+        <run auto-remove="true">
+          <integration name="platform-http-server" file="PlatformHttpServer.java"/>
+        </run>
+      </jbang>
+    </camel>
+
+    <http client="http://localhost:8080">
+      <send-request>
+        <GET path="/hello">
+          <param name="name" value="${username}"/>
+        </GET>
+      </send-request>
+    </http>
+
+    <http client="http://localhost:8080">
+      <receive-response>
+        <response status="200" reason-phrase="OK" content-type="text/plain;charset=UTF-8">
+          <body>
+            <data>Hello ${username}</data>
+          </body>
+        </response>
+      </receive-response>
+    </http>
+  </actions>
+</test>

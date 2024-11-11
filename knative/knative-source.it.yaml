@@ -1,0 +1,40 @@
+name: timer-source-test
+description: Sample test in YAML
+variables:
+  - name: timer.message
+    value: "Hello Knative!"
+actions:
+  - knative:
+      clusterType: LOCAL
+      createBroker:
+        name: "default"
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "knative-source"
+            file: "KnativeSource.java"
+            systemProperties:
+              file: "application.properties"
+              properties:
+                - name: timer.message
+                  value: citrus:urlEncode(${timer.message})
+            environment:
+              variables:
+                - name: K_SINK
+                  value: "http://localhost:8080"
+  - knative:
+      receiveEvent:
+        service: "default"
+        event:
+          data: ${timer.message}
+          attributes:
+            - name: ce-type
+              value: "org.apache.camel.event.messages"
+            - name: ce-source
+              value: "org.apache.camel"
+finally:
+  - camel:
+      jbang:
+        stop:
+          integration: "knative-source"

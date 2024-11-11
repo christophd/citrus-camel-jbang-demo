@@ -1,0 +1,15 @@
+.idea
+*.iml
+
+.DS_Store
+
+target/
+_output/
+test-output/
+
+.yaks-jbang/
+.camel-jbang/
+.camel-jbang-run/
+.citrus-jbang/
+
+*Test.class

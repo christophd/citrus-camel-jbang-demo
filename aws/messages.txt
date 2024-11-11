@@ -1,0 +1,4 @@
+Hello from AWS S3
+What a great day to learn about Apache Camel
+Camel rocks!
+Camel K is awesome!

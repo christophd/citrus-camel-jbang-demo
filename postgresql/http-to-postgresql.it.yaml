@@ -1,0 +1,47 @@
+name: http-to-postgresql-test
+description: Sample test in YAML
+variables:
+  - name: id
+    value: citrus:randomNumber(4)
+  - name: headline
+    value: Camel rocks!
+actions:
+  - testcontainers:
+      start:
+        postgresql:
+          autoRemove: true
+          initScript:
+            file: "db.init.sql"
+  - camel:
+      jbang:
+        run:
+          autoRemove: true
+          integration:
+            name: "http-to-postgresql"
+            file: "HttpToPostgreSQL.java"
+            systemProperties:
+              file: "application.properties"
+  - http:
+      client: "http://localhost:8080"
+      sendRequest:
+        POST:
+          path: "/headline"
+          contentType: "application/json"
+          body:
+            data: |
+              { "id": ${id}, "headline": "${headline}" }
+  - http:
+      client: "http://localhost:8080"
+      receiveResponse:
+        response:
+          status: "200"
+          reasonPhrase: "OK"
+          body:
+            data: "Headline created!"
+  - sql:
+      statements:
+        - statement: |
+            SELECT headline FROM headlines WHERE ID=${id}
+      validate:
+        - column: "HEADLINE"
+          value: "${headline}"

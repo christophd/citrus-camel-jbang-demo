@@ -1,0 +1,40 @@
+name: kafka-consumer-test
+description: Sample test in YAML
+variables:
+  - name: key
+    value: citrus:randomNumber(4)
+  - name: message
+    value: Hello Kafka
+actions:
+  - testcontainers:
+      start:
+        kafka:
+          autoRemove: true
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "kafka-consumer"
+            file: "KafkaConsumer.java"
+            systemProperties:
+              file: "application.properties"
+  - send:
+      endpoint: "kafka:demo-topic?server=${CITRUS_TESTCONTAINERS_KAFKA_BOOTSTRAP_SERVERS}"
+      message:
+        body:
+          data: "${message}"
+        headers:
+          - name: "messageId"
+            value: "${key}"
+          - name: "citrus_kafka_messageKey"
+            value: "${key}"
+  - camel:
+      jbang:
+        verify:
+          integration: "kafka-consumer"
+          logMessage: "${message}"
+finally:
+  - camel:
+      jbang:
+        stop:
+          integration: "kafka-consumer"
