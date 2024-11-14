@@ -1,0 +1,78 @@
+<test name="mqtt-camel-test" xmlns="http://citrusframework.org/schema/xml/testcase"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://citrusframework.org/schema/xml/testcase http://citrusframework.org/schema/xml/testcase/citrus-testcase.xsd">
+  <description>Sample test in XML</description>
+
+  <variables>
+    <variable name="mqtt.topic" value="temperature" />
+    <variable name="mqtt.client.id" value="mqtt-citrus-client" />
+  </variables>
+
+  <actions>
+    <testcontainers>
+      <start>
+        <container image="eclipse-mosquitto:latest" auto-remove="true" name="mqtt" service-name="mqtt">
+          <exposed-ports>
+            <port>1883</port>
+          </exposed-ports>
+          <port-bindings>
+            <binding>1883:1883</binding>
+          </port-bindings>
+          <volume-mounts>
+            <mount file="conf/" mount-path="/mosquitto/config"/>
+          </volume-mounts>
+        </container>
+      </start>
+    </testcontainers>
+
+    <camel>
+      <jbang>
+        <run auto-remove="true">
+          <integration name="mqtt-camel" file="MqttCamel.java">
+            <system-properties file="application.properties"/>
+          </integration>
+        </run>
+      </jbang>
+    </camel>
+
+    <camel>
+      <start-context name="camelContext"/>
+    </camel>
+
+    <send endpoint="camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&amp;clientId=${mqtt.client.id}">
+      <message>
+        <body>
+          <data>
+          {
+            "value": 21
+          }
+          </data>
+        </body>
+      </message>
+    </send>
+
+    <camel>
+      <jbang>
+        <verify integration="mqtt-camel" log-message="Warm temperature at 21"/>
+      </jbang>
+    </camel>
+
+    <send endpoint="camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&amp;clientId=${mqtt.client.id}">
+      <message>
+        <body>
+          <data>
+          {
+            "value": 7
+          }
+          </data>
+        </body>
+      </message>
+    </send>
+
+    <camel>
+      <jbang>
+        <verify integration="mqtt-camel" log-message="Cold temperature at 7"/>
+      </jbang>
+    </camel>
+  </actions>
+</test>

@@ -1,0 +1,61 @@
+name: mqtt-camel-test
+description: Sample test in YAML
+variables:
+  - name: mqtt.topic
+    value: temperature
+  - name: mqtt.client.id
+    value: mqtt-citrus-client
+actions:
+  - testcontainers:
+      start:
+        container:
+          autoRemove: true
+          name: mqtt
+          serviceName: mqtt
+          image: "eclipse-mosquitto:latest"
+          exposedPorts:
+            - 1883
+          portBindings:
+            - "1883:1883"
+          volumeMounts:
+            - file: "conf/"
+              mountPath: "/mosquitto/config"
+  - camel:
+      jbang:
+        run:
+          autoRemove: true
+          integration:
+            name: "mqtt-camel"
+            file: "MqttCamel.java"
+            systemProperties:
+              file: "application.properties"
+  - camel:
+      startContext: {}
+  - send:
+      endpoint: |
+        camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&clientId=${mqtt.client.id}
+      message:
+        body:
+          data: |
+            {
+              "value": 21
+            }
+  - camel:
+      jbang:
+        verify:
+          integration: "mqtt-camel"
+          logMessage: "Warm temperature at 21"
+  - send:
+      endpoint: |
+        camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&clientId=${mqtt.client.id}
+      message:
+        body:
+          data: |
+            {
+              "value": 7
+            }
+  - camel:
+      jbang:
+        verify:
+          integration: "mqtt-camel"
+          logMessage: "Cold temperature at 7"
