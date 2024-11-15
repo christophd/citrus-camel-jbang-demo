@@ -29,13 +29,11 @@ public class KafkaConsumerTest implements Runnable {
             testcontainers()
                 .kafka()
                 .start()
-                .autoRemove(true)
         );
 
         t.when(
             camel().jbang()
                     .run()
-                    .autoRemove(true)
                     .integrationName("kafka-consumer")
                     .integration(Resources.create("KafkaConsumer.java"))
                     .withSystemProperties(Resources.create("application.properties"))

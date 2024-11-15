@@ -27,13 +27,11 @@ public class HttpToPostgreSQLTest implements Runnable {
                     .postgreSQL()
                     .start()
                     .initScript(Resources.create("db.init.sql"))
-                    .autoRemove(true)
         );
 
         t.given(
             camel().jbang()
                     .run()
-                    .autoRemove(true)
                     .withSystemProperties(Resources.create("application.properties"))
                     .integrationName("http-to-postgresql")
                     .integration(Resources.create("HttpToPostgreSQL.java"))

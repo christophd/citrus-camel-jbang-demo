@@ -35,13 +35,11 @@ given:
     $(testcontainers()
             .kafka()
             .start()
-            .autoRemove(true)
     )
 
 when:
     $(camel().jbang()
             .run()
-            .autoRemove(true)
             .integrationName("kafka-consumer")
             .integration(Resources.create("KafkaConsumer.java"))
             .withSystemProperties(Resources.create("application.properties"))

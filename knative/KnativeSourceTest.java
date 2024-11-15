@@ -31,7 +31,6 @@ public class KnativeSourceTest implements Runnable {
         t.given(
             camel().jbang()
                     .run()
-                    .autoRemove(true)
                     .integrationName("knative-source")
                     .integration(Resources.create("KnativeSource.java"))
                     .withSystemProperties(Resources.create("application.properties"))

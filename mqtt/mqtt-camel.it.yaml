@@ -9,7 +9,6 @@ actions:
   - testcontainers:
       start:
         container:
-          autoRemove: true
           name: mqtt
           serviceName: mqtt
           image: "eclipse-mosquitto:latest"
@@ -23,7 +22,6 @@ actions:
   - camel:
       jbang:
         run:
-          autoRemove: true
           integration:
             name: "mqtt-camel"
             file: "MqttCamel.java"

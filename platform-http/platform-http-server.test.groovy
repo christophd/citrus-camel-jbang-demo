@@ -32,7 +32,6 @@ given:
 given:
     $(camel().jbang()
         .run()
-        .autoRemove(true)
         .integrationName("platform-http-server")
         .integration(Resources.create("PlatformHttpServer.java"))
     )

@@ -38,7 +38,6 @@ public class AwsS3ConsumerTest implements Runnable {
                 .localstack()
                 .start()
                 .withService(LocalStackContainer.Service.S3)
-                .autoRemove(true)
         );
 
         t.then(
@@ -52,7 +51,6 @@ public class AwsS3ConsumerTest implements Runnable {
         t.given(
             camel().jbang()
                     .run()
-                    .autoRemove(true)
                     .integrationName("aws-s3-consumer")
                     .integration(Resources.create("AwsS3Consumer.java"))
                     .withSystemProperties(Resources.create("application.properties"))

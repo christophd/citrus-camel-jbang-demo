@@ -31,13 +31,11 @@ public class MqttCamelTest implements Runnable {
                 .addExposedPort(1883)
                 .addPortBinding("1883:1883")
                 .withVolumeMount("conf/", "/mosquitto/config")
-                .autoRemove(true)
         );
 
         t.when(
             camel().jbang()
                     .run()
-                    .autoRemove(true)
                     .integrationName("mqtt-camel")
                     .integration(Resources.create("MqttCamel.java"))
                     .withSystemProperties(Resources.create("application.properties"))

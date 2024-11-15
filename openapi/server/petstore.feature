@@ -14,6 +14,3 @@ Feature: Petstore
     When invoke operation: getPetById
     # Verify response
     Then verify operation result: 200 OK
-
-  Scenario: Stop Camel JBang integration
-    Given stop Camel integration Petstore.java

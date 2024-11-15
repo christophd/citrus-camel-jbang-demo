@@ -39,7 +39,6 @@ public class OpenApiClientTest implements Runnable {
         t.given(
             camel().jbang()
                     .run()
-                    .autoRemove(true)
                     .integrationName("openapi-client")
                     .integration(Resources.create("OpenApiClient.java"))
                     .addResource("petstore-api.json")

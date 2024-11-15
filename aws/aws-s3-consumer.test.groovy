@@ -39,7 +39,6 @@ given:
             .localstack()
             .start()
             .withService(LocalStackContainer.Service.S3)
-            .autoRemove(true)
     )
 
 given:
@@ -51,7 +50,6 @@ given:
 when:
     $(camel().jbang()
             .run()
-            .autoRemove(true)
             .integrationName("aws-s3-consumer")
             .integration(Resources.create("AwsS3Consumer.java"))
             .withSystemProperties(Resources.create("application.properties"))

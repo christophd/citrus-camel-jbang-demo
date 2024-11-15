@@ -38,13 +38,11 @@ given:
             .postgreSQL()
             .start()
             .initScript(Resources.create("db.init.sql"))
-            .autoRemove(true)
     )
 
 when:
     $(camel().jbang()
             .run()
-            .autoRemove(true)
             .withSystemProperties(Resources.create("application.properties"))
             .integrationName("http-to-postgresql")
             .integration(Resources.create("HttpToPostgreSQL.java"))

@@ -11,7 +11,7 @@
   <actions>
     <testcontainers>
       <start>
-        <container image="eclipse-mosquitto:latest" auto-remove="true" name="mqtt" service-name="mqtt">
+        <container image="eclipse-mosquitto:latest" name="mqtt" service-name="mqtt">
           <exposed-ports>
             <port>1883</port>
           </exposed-ports>
@@ -27,7 +27,7 @@
 
     <camel>
       <jbang>
-        <run auto-remove="true">
+        <run>
           <integration name="mqtt-camel" file="MqttCamel.java">
             <system-properties file="application.properties"/>
           </integration>

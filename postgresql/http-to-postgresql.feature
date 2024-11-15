@@ -1,6 +1,7 @@
 Feature: PostgreSQL Kamelet sink
 
   Background:
+    Given Disable auto removal of Testcontainers resources
     Given variables
       | id         | citrus:randomNumber(4) |
       | headline   | Camel rocks!           |
@@ -29,5 +30,4 @@ Feature: PostgreSQL Kamelet sink
     And verify column HEADLINE=${headline}
 
   Scenario: Stop Camel JBang integration
-    Given stop Camel integration HttpToPostgreSQL.java
     And stop PostgreSQL container

@@ -21,7 +21,6 @@ public class PlatformHttpServerTest implements Runnable {
         t.given(
             camel().jbang()
                     .run()
-                    .autoRemove(true)
                     .integrationName("platform-http-server")
                     .integration(Resources.create("PlatformHttpServer.java"))
         );

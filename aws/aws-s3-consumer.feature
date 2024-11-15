@@ -1,6 +1,7 @@
 Feature: AwsS3Consumer
 
   Background:
+    Given Disable auto removal of Testcontainers resources
     Given variables
       | aws.s3.bucketNameOrArn | citrus-camel-demo |
       | aws.s3.message         | Hello Camel! |
@@ -25,5 +26,4 @@ Feature: AwsS3Consumer
     Then Camel integration AwsS3Consumer.java should print Body: { "message": "${aws.s3.message}" }
 
   Scenario: Stop resources
-    Given stop Camel integration AwsS3Consumer.java
     Given stop LocalStack container

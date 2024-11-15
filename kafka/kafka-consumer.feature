@@ -25,5 +25,4 @@ Feature: KafkaConsumer
     Then Camel integration KafkaConsumer.java should print ${message}
 
   Scenario: Stop resources
-    Given stop Camel integration KafkaConsumer.java
     Given stop Kafka container

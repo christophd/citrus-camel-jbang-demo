@@ -8,8 +8,7 @@ variables:
 actions:
   - testcontainers:
       start:
-        kafka:
-          autoRemove: true
+        kafka: {}
   - camel:
       jbang:
         run:

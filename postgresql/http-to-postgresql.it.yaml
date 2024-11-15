@@ -9,13 +9,11 @@ actions:
   - testcontainers:
       start:
         postgresql:
-          autoRemove: true
           initScript:
             file: "db.init.sql"
   - camel:
       jbang:
         run:
-          autoRemove: true
           integration:
             name: "http-to-postgresql"
             file: "HttpToPostgreSQL.java"

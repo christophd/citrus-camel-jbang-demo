@@ -11,13 +11,13 @@
   <actions>
     <testcontainers>
       <start>
-        <kafka auto-remove="true"/>
+        <kafka/>
       </start>
     </testcontainers>
 
     <camel>
       <jbang>
-        <run auto-remove="true">
+        <run>
           <integration name="kafka-consumer" file="KafkaConsumer.java">
             <system-properties file="application.properties"/>
           </integration>
