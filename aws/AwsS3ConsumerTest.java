@@ -10,6 +10,7 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.aws2S3;
 import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariables;
 import static org.citrusframework.actions.SendMessageAction.Builder.send;
 import static org.citrusframework.camel.dsl.CamelSupport.camel;
@@ -58,8 +59,11 @@ public class AwsS3ConsumerTest implements Runnable {
         );
 
         t.then(
-            send()
-                .endpoint("camel:aws2-s3:${aws.s3.bucketNameOrArn}?amazonS3Client=#amazonS3Client")
+            camel()
+                .send()
+                .endpoint(aws2S3("${aws.s3.bucketNameOrArn}")
+                            .advanced()
+                            .amazonS3Client("#amazonS3Client")::getRawUri)
                 .message()
                 .body("${aws.s3.message}")
                 .header("CamelAwsS3Key", "${aws.s3.key}")

@@ -17,6 +17,7 @@
 
 import org.citrusframework.spi.Resources
 
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.pahoMqtt5
 import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariables
 import static org.citrusframework.actions.SendMessageAction.Builder.send
 import static org.citrusframework.camel.dsl.CamelSupport.camel
@@ -55,10 +56,11 @@ when:
 
 then:
     $(camel().camelContext().start())
-    $(send()
-        .endpoint('camel:paho-mqtt5:${mqtt.topic}?' +
-                'brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&' +
-                'clientId=${mqtt.client.id}')
+    $(camel()
+        .send()
+        .endpoint(pahoMqtt5('${mqtt.topic}')
+                        .brokerUrl('tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}')
+                        .clientId('${mqtt.client.id}')::getRawUri)
         .message()
         .body("""
             {
@@ -74,10 +76,11 @@ then:
     )
 
 then:
-    $(send()
-        .endpoint('camel:paho-mqtt5:${mqtt.topic}?' +
-                'brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&' +
-                'clientId=${mqtt.client.id}')
+    $(camel()
+        .send()
+        .endpoint(pahoMqtt5('${mqtt.topic}')
+                        .brokerUrl('tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}')
+                        .clientId('${mqtt.client.id}')::getRawUri)
         .message()
         .body("""
             {

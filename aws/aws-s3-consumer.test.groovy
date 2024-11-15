@@ -18,6 +18,7 @@
 import org.citrusframework.spi.Resources
 import org.citrusframework.testcontainers.aws2.LocalStackContainer
 
+import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.aws2S3
 import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariables
 import static org.citrusframework.actions.SendMessageAction.Builder.send
 import static org.citrusframework.camel.dsl.CamelSupport.camel
@@ -57,8 +58,11 @@ when:
     )
 
 then:
-    $(send()
-            .endpoint('camel:aws2-s3:${aws.s3.bucketNameOrArn}?amazonS3Client=#amazonS3Client')
+    $(camel()
+            .send()
+            .endpoint(aws2S3('${aws.s3.bucketNameOrArn}')
+                        .advanced()
+                        .amazonS3Client('#amazonS3Client')::getRawUri)
             .message()
             .body('${aws.s3.message}')
             .header("CamelAwsS3Key", '${aws.s3.key}')
