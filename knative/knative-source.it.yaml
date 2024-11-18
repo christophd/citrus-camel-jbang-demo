@@ -33,8 +33,3 @@ actions:
               value: "org.apache.camel.event.messages"
             - name: ce-source
               value: "org.apache.camel"
-finally:
-  - camel:
-      jbang:
-        stop:
-          integration: "knative-source"

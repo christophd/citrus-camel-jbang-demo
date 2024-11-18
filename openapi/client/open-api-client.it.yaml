@@ -1,0 +1,29 @@
+name: openapi-client-test
+description: Sample test in YAML
+variables:
+  - name: petId
+    value: 1000
+actions:
+  - groovy:
+      file: petstoreServer.groovy
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "openapi-client"
+            file: "OpenApiClient.java"
+            systemProperties:
+              file: application.properties
+          resources:
+            - "petstore-api.json"
+  - openapi:
+      specification: "petstore-api.json"
+      server: "petstoreServer"
+      receiveRequest:
+        operation: addPet
+  - openapi:
+      specification: "petstore-api.json"
+      server: "petstoreServer"
+      sendResponse:
+        operation: addPet
+        status: 201

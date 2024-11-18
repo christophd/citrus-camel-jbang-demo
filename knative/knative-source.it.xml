@@ -1,0 +1,42 @@
+<test name="knative-source-test" xmlns="http://citrusframework.org/schema/xml/testcase"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://citrusframework.org/schema/xml/testcase http://citrusframework.org/schema/xml/testcase/citrus-testcase.xsd">
+  <description>Sample test in XML</description>
+
+  <variables>
+    <variable name="timer.message" value="Hello Knative!" />
+  </variables>
+
+  <actions>
+    <knative cluster-type="LOCAL">
+      <create-broker name="default"/>
+    </knative>
+
+    <camel>
+      <jbang>
+        <run auto-remove="true">
+          <integration name="knative-source" file="KnativeSource.java">
+            <system-properties file="application.properties">
+              <property name="timer.message" value="citrus:urlEncode(${timer.message})"/>
+            </system-properties>
+            <environment>
+              <variable name="K_SINK" value="http://localhost:8080"/>
+            </environment>
+          </integration>
+        </run>
+      </jbang>
+    </camel>
+
+    <knative>
+      <receive-event service="default">
+        <event>
+          <ce-attributes>
+            <ce-attribute name="ce-type" value="org.apache.camel.event.messages"/>
+            <ce-attribute name="ce-source" value="org.apache.camel"/>
+          </ce-attributes>
+          <data>${timer.message}</data>
+        </event>
+      </receive-event>
+    </knative>
+  </actions>
+</test>

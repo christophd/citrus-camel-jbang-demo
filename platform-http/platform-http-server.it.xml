@@ -10,7 +10,7 @@
   <actions>
     <camel>
       <jbang>
-        <run>
+        <run auto-remove="true">
           <integration name="platform-http-server" file="PlatformHttpServer.java"/>
         </run>
       </jbang>

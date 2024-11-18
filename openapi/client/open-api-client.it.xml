@@ -1,0 +1,36 @@
+<test name="open-api-client-test" xmlns="http://citrusframework.org/schema/xml/testcase"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://citrusframework.org/schema/xml/testcase http://citrusframework.org/schema/xml/testcase/citrus-testcase.xsd">
+  <description>Sample test in XML</description>
+
+  <variables>
+    <variable name="petId" value="1000" />
+  </variables>
+
+  <actions>
+    <groovy file="petstoreServer.groovy"/>
+
+    <camel>
+      <jbang>
+        <run auto-remove="true">
+          <integration name="openapi-client" file="OpenApiClient.java">
+            <system-properties file="application.properties"/>
+          </integration>
+          <resources>
+            <resource>petstore-api.json</resource>
+          </resources>
+        </run>
+      </jbang>
+    </camel>
+
+    <openapi specification="petstore-api.json"
+             server="petstoreServer">
+      <receive-request operation="addPet"/>
+    </openapi>
+
+    <openapi specification="petstore-api.json"
+             server="petstoreServer">
+      <send-response operation="addPet" status="201"/>
+    </openapi>
+  </actions>
+</test>

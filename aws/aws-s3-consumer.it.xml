@@ -1,0 +1,58 @@
+<test name="aws-s3-consumer-test" xmlns="http://citrusframework.org/schema/xml/testcase"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://citrusframework.org/schema/xml/testcase http://citrusframework.org/schema/xml/testcase/citrus-testcase.xsd">
+  <description>Sample test in XML</description>
+
+  <variables>
+    <variable name="aws.s3.bucketNameOrArn" value="citrus-camel-demo" />
+    <variable name="aws.s3.key" value="hello.txt" />
+    <variable name="aws.s3.message" value="Hello Camel!" />
+  </variables>
+
+  <actions>
+    <testcontainers>
+      <start>
+        <localstack services="S3"/>
+      </start>
+    </testcontainers>
+
+    <camel>
+      <start-context name="camelContext"/>
+    </camel>
+
+    <camel>
+      <create-component name="amazonS3Client" file="amazonS3Client.groovy"/>
+    </camel>
+
+    <camel>
+      <jbang>
+        <run auto-remove="true">
+          <integration name="aws-s3-consumer" file="AwsS3Consumer.java">
+            <system-properties file="application.properties"/>
+          </integration>
+        </run>
+      </jbang>
+    </camel>
+
+    <camel>
+      <start-context name="camelContext"/>
+    </camel>
+
+    <send endpoint="camel:aws2-s3:${aws.s3.bucketNameOrArn}?amazonS3Client=#amazonS3Client">
+      <message>
+        <headers>
+          <header name="CamelAwsS3Key" value="${aws.s3.key}"/>
+        </headers>
+        <body>
+          <data>${aws.s3.message}</data>
+        </body>
+      </message>
+    </send>
+
+    <camel>
+      <jbang>
+        <verify integration="aws-s3-consumer" log-message="Body: { &quot;message&quot;: &quot;${aws.s3.message}&quot; }"/>
+      </jbang>
+    </camel>
+  </actions>
+</test>

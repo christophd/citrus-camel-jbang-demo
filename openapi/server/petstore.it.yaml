@@ -1,0 +1,27 @@
+name: petstore-test
+description: Sample test in YAML
+variables:
+  - name: petId
+    value: 1000
+actions:
+  - camel:
+      jbang:
+        run:
+          integration:
+            name: "petstore"
+            file: "Petstore.java"
+            systemProperties:
+              file: application.properties
+          resources:
+            - "petstore-api.json"
+  - openapi:
+      specification: "http://localhost:8080/openapi"
+      client: "http://localhost:8080/petstore"
+      sendRequest:
+        operation: getPetById
+  - openapi:
+      specification: "http://localhost:8080/openapi"
+      client: "http://localhost:8080/petstore"
+      receiveResponse:
+        operation: getPetById
+        status: 200

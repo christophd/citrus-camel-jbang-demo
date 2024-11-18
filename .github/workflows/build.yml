@@ -1,0 +1,260 @@
+# ---------------------------------------------------------------------------
+# Copyright the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ---------------------------------------------------------------------------
+
+name: build
+
+on:
+  pull_request: {}
+  push:
+    branches:
+      - main
+
+jobs:
+  java-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Cache Maven cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Run Tests
+        run: |
+          echo "Install JBang via SDKMAN"
+
+          curl -s "https://get.sdkman.io" | bash 
+          source "/home/runner/.sdkman/bin/sdkman-init.sh"
+          sdk install jbang
+          
+          jbang --version
+          
+          jbang trust add https://github.com/citrusframework/citrus/
+          jbang trust add https://github.com/apache/camel/
+
+          jbang citrus@citrusframework/citrus --version
+          jbang camel@apache/camel --version
+
+          echo "Running tests"
+
+          pushd platform-http
+          jbang citrus@citrusframework/citrus run PlatformHttpServerTest.java
+          popd
+          pushd openapi/server
+          jbang citrus@citrusframework/citrus run PetstoreTest.java 
+          popd
+          pushd openapi/client
+          jbang citrus@citrusframework/citrus run OpenApiClientTest.java 
+          popd
+          pushd kafka
+          jbang citrus@citrusframework/citrus run KafkaConsumerTest.java 
+          popd
+          pushd knative
+          jbang citrus@citrusframework/citrus run KnativeSourceTest.java 
+          popd
+          pushd postgresql
+          jbang citrus@citrusframework/citrus run HttpToPostgreSQLTest.java 
+          popd
+          pushd aws
+          jbang citrus@citrusframework/citrus run AwsS3ConsumerTest.java 
+          popd
+          pushd mqtt
+          jbang citrus@citrusframework/citrus run MqttCamelTest.java 
+          popd
+
+  yaml-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Cache Maven cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Run Tests
+        run: |
+          echo "Install JBang via SDKMAN"
+
+          curl -s "https://get.sdkman.io" | bash 
+          source "/home/runner/.sdkman/bin/sdkman-init.sh"
+          sdk install jbang
+          
+          jbang --version
+          
+          jbang trust add https://github.com/citrusframework/citrus/
+          jbang trust add https://github.com/apache/camel/
+
+          jbang citrus@citrusframework/citrus --version
+          jbang camel@apache/camel --version
+
+          echo "Running tests"
+
+          pushd platform-http
+          jbang citrus@citrusframework/citrus run platform-http-server.it.yaml
+          popd
+          pushd openapi/server
+          jbang citrus@citrusframework/citrus run petstore.it.yaml 
+          popd
+          pushd openapi/client
+          jbang citrus@citrusframework/citrus run open-api-client.it.yaml 
+          popd
+          pushd kafka
+          jbang citrus@citrusframework/citrus run kafka-consumer.it.yaml 
+          popd
+          pushd knative
+          jbang citrus@citrusframework/citrus run knative-source.it.yaml 
+          popd
+          pushd postgresql
+          jbang citrus@citrusframework/citrus run http-to-postgresql.it.yaml 
+          popd
+          pushd aws
+          jbang citrus@citrusframework/citrus run aws-s3-consumer.it.yaml 
+          popd
+          pushd mqtt
+          jbang citrus@citrusframework/citrus run mqtt-camel.it.yaml 
+          popd
+
+  groovy-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Cache Maven cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Run Tests
+        run: |
+          echo "Install JBang via SDKMAN"
+
+          curl -s "https://get.sdkman.io" | bash 
+          source "/home/runner/.sdkman/bin/sdkman-init.sh"
+          sdk install jbang
+          
+          jbang --version
+          
+          jbang trust add https://github.com/citrusframework/citrus/
+          jbang trust add https://github.com/apache/camel/
+
+          jbang citrus@citrusframework/citrus --version
+          jbang camel@apache/camel --version
+
+          echo "Running tests"
+
+          pushd platform-http
+          jbang citrus@citrusframework/citrus run platform-http-server.test.groovy
+          popd
+          pushd openapi/server
+          jbang citrus@citrusframework/citrus run petstore.test.groovy 
+          popd
+          pushd openapi/client
+          jbang citrus@citrusframework/citrus run open-api-client.test.groovy 
+          popd
+          pushd kafka
+          jbang citrus@citrusframework/citrus run kafka-consumer.test.groovy 
+          popd
+          pushd knative
+          jbang citrus@citrusframework/citrus run knative-source.test.groovy 
+          popd
+          pushd postgresql
+          jbang citrus@citrusframework/citrus run http-to-postgresql.test.groovy 
+          popd
+          pushd aws
+          jbang citrus@citrusframework/citrus run aws-s3-consumer.test.groovy 
+          popd
+          pushd mqtt
+          jbang citrus@citrusframework/citrus run mqtt-camel.test.groovy 
+          popd
+
+  xml-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Cache Maven cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Run Tests
+        run: |
+          echo "Install JBang via SDKMAN"
+
+          curl -s "https://get.sdkman.io" | bash 
+          source "/home/runner/.sdkman/bin/sdkman-init.sh"
+          sdk install jbang
+          
+          jbang --version
+          
+          jbang trust add https://github.com/citrusframework/citrus/
+          jbang trust add https://github.com/apache/camel/
+
+          jbang citrus@citrusframework/citrus --version
+          jbang camel@apache/camel --version
+
+          echo "Running tests"
+
+          pushd platform-http
+          jbang citrus@citrusframework/citrus run platform-http-server.it.xml
+          popd
+          pushd openapi/server
+          jbang citrus@citrusframework/citrus run petstore.it.xml 
+          popd
+          pushd openapi/client
+          jbang citrus@citrusframework/citrus run open-api-client.it.xml 
+          popd
+          pushd kafka
+          jbang citrus@citrusframework/citrus run kafka-consumer.it.xml 
+          popd
+          pushd knative
+          jbang citrus@citrusframework/citrus run knative-source.it.xml 
+          popd
+          pushd postgresql
+          jbang citrus@citrusframework/citrus run http-to-postgresql.it.xml 
+          popd
+          pushd aws
+          jbang citrus@citrusframework/citrus run aws-s3-consumer.it.xml 
+          popd
+          pushd mqtt
+          jbang citrus@citrusframework/citrus run mqtt-camel.it.xml 
+          popd

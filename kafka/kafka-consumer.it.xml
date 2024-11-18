@@ -17,7 +17,7 @@
 
     <camel>
       <jbang>
-        <run>
+        <run auto-remove="true">
           <integration name="kafka-consumer" file="KafkaConsumer.java">
             <system-properties file="application.properties"/>
           </integration>

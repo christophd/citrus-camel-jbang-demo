@@ -27,8 +27,3 @@ actions:
           contentType: "text/plain;charset=UTF-8"
           body:
             data: "Hello ${username}"
-finally:
-  - camel:
-      jbang:
-        stop:
-          integration: "platform-http-server"

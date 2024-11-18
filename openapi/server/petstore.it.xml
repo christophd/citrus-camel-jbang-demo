@@ -1,0 +1,34 @@
+<test name="petstore-test" xmlns="http://citrusframework.org/schema/xml/testcase"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://citrusframework.org/schema/xml/testcase http://citrusframework.org/schema/xml/testcase/citrus-testcase.xsd">
+  <description>Sample test in XML</description>
+
+  <variables>
+    <variable name="petId" value="1000" />
+  </variables>
+
+  <actions>
+    <camel>
+      <jbang>
+        <run auto-remove="true">
+          <integration name="petstore" file="Petstore.java">
+            <system-properties file="application.properties"/>
+          </integration>
+          <resources>
+            <resource>petstore-api.json</resource>
+          </resources>
+        </run>
+      </jbang>
+    </camel>
+
+    <openapi specification="http://localhost:8080/openapi"
+             client="http://localhost:8080/petstore">
+      <send-request operation="getPetById"/>
+    </openapi>
+
+    <openapi specification="http://localhost:8080/openapi"
+             client="http://localhost:8080/petstore">
+      <receive-response operation="getPetById" status="200"/>
+    </openapi>
+  </actions>
+</test>

@@ -27,7 +27,7 @@
 
     <camel>
       <jbang>
-        <run>
+        <run auto-remove="true">
           <integration name="mqtt-camel" file="MqttCamel.java">
             <system-properties file="application.properties"/>
           </integration>
