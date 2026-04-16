@@ -5,7 +5,8 @@ variables:
     value: 1000
 actions:
   - groovy:
-      file: petstoreServer.groovy
+      script:
+        file: petstoreServer.groovy
   - camel:
       jbang:
         run:

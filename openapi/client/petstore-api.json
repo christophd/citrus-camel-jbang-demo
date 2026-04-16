@@ -29,7 +29,7 @@
       }
     }
   ],
-    "paths": {
+  "paths": {
     "/pet": {
             "put": {
                 "requestBody": {

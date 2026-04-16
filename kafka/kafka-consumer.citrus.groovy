@@ -15,37 +15,42 @@
  * limitations under the License.
  */
 
+import org.citrusframework.kafka.message.KafkaMessage
 import org.citrusframework.spi.Resources
-import org.springframework.http.HttpStatus
 
-import static org.citrusframework.camel.dsl.CamelSupport.camel
-import static org.citrusframework.http.actions.HttpActionBuilder.http
-
-name "PlatformHttpTest"
+name "KafkaConsumerTest"
 description "Sample test in Groovy"
 
 given:
     variables {
-        username = "Christoph"
+        key = "citrus:randomNumber(4)"
+        message = "Hello Kafka"
     }
 
 given:
-    $(camel().jbang()
-        .run()
-        .integrationName("platform-http-server")
-        .integration(Resources.create("PlatformHttpServer.java"))
+    $(testcontainers()
+            .kafka()
+            .start()
     )
 
 when:
-    $(http().client("http://localhost:8080")
-        .send()
-        .get("/hello")
-        .queryParam("name", '${username}')
+    $(camel().jbang()
+            .run()
+            .integrationName("kafka-consumer")
+            .integration(Resources.create("KafkaConsumer.java"))
+            .withSystemProperties(Resources.create("application.properties"))
     )
 
 then:
-    $(http().client("http://localhost:8080")
-        .receive()
-        .response(HttpStatus.OK)
-        .message().body('Hello ${username}')
+    $(send()
+        .endpoint('kafka:demo-topic?server=${CITRUS_TESTCONTAINERS_KAFKA_BOOTSTRAP_SERVERS}')
+        .message(new KafkaMessage('${message}', Collections.singletonMap("messageId", '${key}'))
+                .messageKey('${key}'))
+    )
+
+then:
+    $(camel().jbang()
+            .verify()
+            .integration("kafka-consumer")
+            .waitForLogMessage('${message}')
     )

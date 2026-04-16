@@ -15,7 +15,7 @@ actions:
           exposedPorts:
             - 1883
           portBindings:
-            - "1883:1883"
+            - "11883:1883"
           volumeMounts:
             - file: "conf/"
               mountPath: "/mosquitto/config"
@@ -31,7 +31,7 @@ actions:
       startContext: {}
   - send:
       endpoint: |
-        camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&clientId=${mqtt.client.id}
+        camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:11883&clientId=${mqtt.client.id}
       message:
         body:
           data: |
@@ -45,7 +45,7 @@ actions:
           logMessage: "Warm temperature at 21"
   - send:
       endpoint: |
-        camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&clientId=${mqtt.client.id}
+        camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:11883&clientId=${mqtt.client.id}
       message:
         body:
           data: |

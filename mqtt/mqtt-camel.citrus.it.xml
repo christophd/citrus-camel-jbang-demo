@@ -16,7 +16,7 @@
             <port>1883</port>
           </exposed-ports>
           <port-bindings>
-            <binding>1883:1883</binding>
+            <binding>12883:1883</binding>
           </port-bindings>
           <volume-mounts>
             <mount file="conf/" mount-path="/mosquitto/config"/>
@@ -39,7 +39,7 @@
       <start-context name="camelContext"/>
     </camel>
 
-    <send endpoint="camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&amp;clientId=${mqtt.client.id}">
+    <send endpoint="camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:12883&amp;clientId=${mqtt.client.id}">
       <message>
         <body>
           <data>
@@ -57,7 +57,7 @@
       </jbang>
     </camel>
 
-    <send endpoint="camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}&amp;clientId=${mqtt.client.id}">
+    <send endpoint="camel:paho-mqtt5:${mqtt.topic}?brokerUrl=tcp://localhost:12883&amp;clientId=${mqtt.client.id}">
       <message>
         <body>
           <data>

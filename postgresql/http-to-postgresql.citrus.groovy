@@ -15,45 +15,54 @@
  * limitations under the License.
  */
 
-import org.citrusframework.kafka.message.KafkaMessage
 import org.citrusframework.spi.Resources
+import org.springframework.http.HttpStatus
 
-import static org.citrusframework.actions.SendMessageAction.Builder.send
-import static org.citrusframework.camel.dsl.CamelSupport.camel
-import static org.citrusframework.testcontainers.actions.TestcontainersActionBuilder.testcontainers
-
-name "KafkaConsumerTest"
+name "HttpToPostgreSQLTest"
 description "Sample test in Groovy"
 
 given:
-    variables {
-        key = "citrus:randomNumber(4)"
-        message = "Hello Kafka"
-    }
+    $(createVariables()
+            .variable("id", "citrus:randomNumber(4)")
+            .variable("headline", "Camel rocks!")
+    )
 
 given:
     $(testcontainers()
-            .kafka()
+            .postgreSQL()
             .start()
+            .initScript(Resources.create("db.init.sql"))
     )
 
 when:
     $(camel().jbang()
             .run()
-            .integrationName("kafka-consumer")
-            .integration(Resources.create("KafkaConsumer.java"))
             .withSystemProperties(Resources.create("application.properties"))
+            .integrationName("http-to-postgresql")
+            .integration(Resources.create("HttpToPostgreSQL.java"))
     )
 
 then:
-    $(send()
-        .endpoint('kafka:demo-topic?server=${CITRUS_TESTCONTAINERS_KAFKA_BOOTSTRAP_SERVERS}')
-        .message(new KafkaMessage('${message}', Collections.singletonMap("messageId", '${key}'))
-                .messageKey('${key}'))
+    $(http().client("http://localhost:8080")
+            .send()
+            .post("/headline")
+            .message()
+            .body('''
+                { "id": ${id}, "headline": "${headline}" }
+                ''')
+            .contentType("application/json")
     )
 
 then:
-    $(camel().jbang()
-            .verify("kafka-consumer")
-            .waitForLogMessage('${message}')
+    $(http().client("http://localhost:8080")
+            .receive()
+            .response(HttpStatus.OK)
+            .message().body("Headline created!")
+    )
+
+then:
+    $(sql()
+        .query()
+        .statement("SELECT headline FROM headlines WHERE ID=${id}")
+        .validate("HEADLINE", "${headline}")
     )

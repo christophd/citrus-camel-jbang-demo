@@ -1,16 +1,13 @@
 package server;
 
 import org.citrusframework.GherkinTestActionRunner;
+import org.citrusframework.TestActionSupport;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.openapi.OpenApiSpecification;
 import org.citrusframework.spi.Resources;
 import org.springframework.http.HttpStatus;
 
-import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariables;
-import static org.citrusframework.camel.dsl.CamelSupport.camel;
-import static org.citrusframework.openapi.actions.OpenApiActionBuilder.openapi;
-
-public class PetstoreTest implements Runnable {
+public class PetstoreTest implements Runnable, TestActionSupport {
 
     @CitrusResource
     GherkinTestActionRunner t;
@@ -35,13 +32,13 @@ public class PetstoreTest implements Runnable {
 
         t.then(
             openapi().specification(petstoreApi)
-                    .client("http://localhost:8080/petstore")
+                    .client("http://localhost:8080")
                     .send("getPetById")
         );
 
         t.then(
             openapi().specification(petstoreApi)
-                    .client("http://localhost:8080/petstore")
+                    .client("http://localhost:8080")
                     .receive("getPetById", HttpStatus.OK)
         );
     }

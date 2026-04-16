@@ -1,14 +1,11 @@
 import org.citrusframework.GherkinTestActionRunner;
+import org.citrusframework.TestActionSupport;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.spi.Resources;
 
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.pahoMqtt5;
-import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariables;
-import static org.citrusframework.actions.SendMessageAction.Builder.send;
-import static org.citrusframework.camel.dsl.CamelSupport.camel;
-import static org.citrusframework.testcontainers.actions.TestcontainersActionBuilder.testcontainers;
 
-public class MqttCamelTest implements Runnable {
+public class MqttCamelTest implements Runnable, TestActionSupport {
 
     @CitrusResource
     GherkinTestActionRunner t;
@@ -29,7 +26,7 @@ public class MqttCamelTest implements Runnable {
                 .containerName("mqtt")
                 .serviceName("mqtt")
                 .addExposedPort(1883)
-                .addPortBinding("1883:1883")
+                .addPortBinding("13883:1883")
                 .withVolumeMount("conf/", "/mosquitto/config")
         );
 
@@ -49,7 +46,7 @@ public class MqttCamelTest implements Runnable {
             camel()
                 .send()
                 .endpoint(pahoMqtt5("${mqtt.topic}")
-                                .brokerUrl("tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}")
+                                .brokerUrl("tcp://localhost:13883")
                                 .clientId("${mqtt.client.id}")::getRawUri)
                 .message()
                 .body("""
@@ -61,7 +58,8 @@ public class MqttCamelTest implements Runnable {
 
         t.then(
             camel().jbang()
-                    .verify("mqtt-camel")
+                    .verify()
+                    .integration("mqtt-camel")
                     .waitForLogMessage("Warm temperature at 21")
         );
 
@@ -69,7 +67,7 @@ public class MqttCamelTest implements Runnable {
             camel()
                 .send()
                 .endpoint(pahoMqtt5("${mqtt.topic}")
-                                .brokerUrl("tcp://localhost:${CITRUS_TESTCONTAINERS_MQTT_PORT}")
+                                .brokerUrl("tcp://localhost:13883")
                                 .clientId("${mqtt.client.id}")::getRawUri)
                 .message()
                 .body("""
@@ -81,7 +79,8 @@ public class MqttCamelTest implements Runnable {
 
         t.then(
             camel().jbang()
-                    .verify("mqtt-camel")
+                    .verify()
+                    .integration("mqtt-camel")
                     .waitForLogMessage("Cold temperature at 7")
         );
     }

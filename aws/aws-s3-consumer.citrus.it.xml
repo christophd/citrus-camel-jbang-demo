@@ -12,17 +12,11 @@
   <actions>
     <testcontainers>
       <start>
-        <localstack services="S3"/>
+        <localstack services="S3">
+          <options name="buckets" value="${aws.s3.bucketNameOrArn}"/>
+        </localstack>
       </start>
     </testcontainers>
-
-    <camel>
-      <start-context name="camelContext"/>
-    </camel>
-
-    <camel>
-      <create-component name="amazonS3Client" file="amazonS3Client.groovy"/>
-    </camel>
 
     <camel>
       <jbang>
@@ -34,11 +28,7 @@
       </jbang>
     </camel>
 
-    <camel>
-      <start-context name="camelContext"/>
-    </camel>
-
-    <send endpoint="camel:aws2-s3:${aws.s3.bucketNameOrArn}?amazonS3Client=#amazonS3Client">
+    <send endpoint="camel:aws2-s3:${aws.s3.bucketNameOrArn}?amazonS3Client=#s3Client">
       <message>
         <headers>
           <header name="CamelAwsS3Key" value="${aws.s3.key}"/>

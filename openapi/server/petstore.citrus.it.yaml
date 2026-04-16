@@ -16,12 +16,12 @@ actions:
             - "petstore-api.json"
   - openapi:
       specification: "http://localhost:8080/openapi"
-      client: "http://localhost:8080/petstore"
+      client: "http://localhost:8080"
       sendRequest:
         operation: getPetById
   - openapi:
       specification: "http://localhost:8080/openapi"
-      client: "http://localhost:8080/petstore"
+      client: "http://localhost:8080"
       receiveResponse:
         operation: getPetById
         status: 200

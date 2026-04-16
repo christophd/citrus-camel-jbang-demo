@@ -15,42 +15,42 @@
  * limitations under the License.
  */
 
-package server
-
-import org.citrusframework.openapi.OpenApiSpecification
+import org.citrusframework.kubernetes.ClusterType
 import org.citrusframework.spi.Resources
-import org.springframework.http.HttpStatus
 
-import static org.citrusframework.camel.dsl.CamelSupport.camel
-import static org.citrusframework.openapi.actions.OpenApiActionBuilder.openapi
-
-name "PetstoreTest"
+name "KnativeSourceTest"
 description "Sample test in Groovy"
 
 given:
     variables {
-        petId = "1000"
+        timerMessage = "Hello Knative!"
     }
+
+given:
+    $(knative()
+        .brokers()
+        .create("default")
+        .clusterType(ClusterType.LOCAL)
+    )
 
 when:
     $(camel().jbang()
-        .run()
-        .integrationName("petstore")
-        .integration(Resources.create("Petstore.java"))
-        .addResource("petstore-api.json")
-        .withSystemProperties(Resources.create("application.properties"))
-    )
-
-OpenApiSpecification petstoreApi = OpenApiSpecification.from("http://localhost:8080/openapi");
-
-then:
-    $(openapi().specification(petstoreApi)
-            .client("http://localhost:8080/petstore")
-            .send("getPetById")
+            .run()
+            .integrationName("knative-source")
+            .integration(Resources.create("KnativeSource.java"))
+            .withSystemProperties(Resources.create("application.properties"))
+            .withSystemProperty("timer.message", '${timerMessage}')
+            .withEnv("K_SINK", "http://localhost:8080")
     )
 
 then:
-    $(openapi().specification(petstoreApi)
-            .client("http://localhost:8080/petstore")
-            .receive("getPetById", HttpStatus.OK)
+    $(knative()
+        .event()
+        .receive()
+        .serviceName("default")
+        .eventData('${timerMessage}')
+        .attribute("ce-id", "@notNull()@")
+        .attribute("ce-type", "org.apache.camel.event.messages")
+        .attribute("ce-source", "org.apache.camel")
+        .attribute("Content-Type", "text/plain")
     )

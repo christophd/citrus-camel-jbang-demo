@@ -18,7 +18,7 @@ actions:
               file: "application.properties"
               properties:
                 - name: timer.message
-                  value: citrus:urlEncode(${timer.message})
+                  value: ${timer.message}
             environment:
               variables:
                 - name: K_SINK

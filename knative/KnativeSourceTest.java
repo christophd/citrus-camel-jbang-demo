@@ -1,13 +1,10 @@
 import org.citrusframework.GherkinTestActionRunner;
+import org.citrusframework.TestActionSupport;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.kubernetes.ClusterType;
 import org.citrusframework.spi.Resources;
 
-import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariables;
-import static org.citrusframework.camel.dsl.CamelSupport.camel;
-import static org.citrusframework.knative.actions.KnativeActionBuilder.knative;
-
-public class KnativeSourceTest implements Runnable {
+public class KnativeSourceTest implements Runnable, TestActionSupport {
 
     @CitrusResource
     GherkinTestActionRunner t;
@@ -34,7 +31,7 @@ public class KnativeSourceTest implements Runnable {
                     .integrationName("knative-source")
                     .integration(Resources.create("KnativeSource.java"))
                     .withSystemProperties(Resources.create("application.properties"))
-                    .withSystemProperty("timer.message", "citrus:urlEncode(${timer.message})")
+                    .withSystemProperty("timer.message", "${timer.message}")
                     .withEnv("K_SINK", "http://localhost:8080")
         );
 

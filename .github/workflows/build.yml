@@ -117,28 +117,28 @@ jobs:
           echo "Running tests"
 
           pushd platform-http
-          jbang citrus@citrusframework/citrus run platform-http-server.it.yaml
+          jbang citrus@citrusframework/citrus run platform-http-server.citrus.it.yaml
           popd
           pushd openapi/server
-          jbang citrus@citrusframework/citrus run petstore.it.yaml 
+          jbang citrus@citrusframework/citrus run petstore.citrus.it.yaml 
           popd
           pushd openapi/client
-          jbang citrus@citrusframework/citrus run open-api-client.it.yaml 
+          jbang citrus@citrusframework/citrus run open-api-client.citrus.it.yaml 
           popd
           pushd kafka
-          jbang citrus@citrusframework/citrus run kafka-consumer.it.yaml 
+          jbang citrus@citrusframework/citrus run kafka-consumer.citrus.it.yaml 
           popd
           pushd knative
-          jbang citrus@citrusframework/citrus run knative-source.it.yaml 
+          jbang citrus@citrusframework/citrus run knative-source.citrus.it.yaml 
           popd
           pushd postgresql
-          jbang citrus@citrusframework/citrus run http-to-postgresql.it.yaml 
+          jbang citrus@citrusframework/citrus run http-to-postgresql.citrus.it.yaml 
           popd
           pushd aws
-          jbang citrus@citrusframework/citrus run aws-s3-consumer.it.yaml 
+          jbang citrus@citrusframework/citrus run aws-s3-consumer.citrus.it.yaml 
           popd
           pushd mqtt
-          jbang citrus@citrusframework/citrus run mqtt-camel.it.yaml 
+          jbang citrus@citrusframework/citrus run mqtt-camel.citrus.it.yaml 
           popd
 
   groovy-tests:
@@ -176,28 +176,28 @@ jobs:
           echo "Running tests"
 
           pushd platform-http
-          jbang citrus@citrusframework/citrus run platform-http-server.test.groovy
+          jbang citrus@citrusframework/citrus run platform-http-server.citrus.groovy
           popd
           pushd openapi/server
-          jbang citrus@citrusframework/citrus run petstore.test.groovy 
+          jbang citrus@citrusframework/citrus run petstore.citrus.groovy 
           popd
           pushd openapi/client
-          jbang citrus@citrusframework/citrus run open-api-client.test.groovy 
+          jbang citrus@citrusframework/citrus run open-api-client.citrus.groovy 
           popd
           pushd kafka
-          jbang citrus@citrusframework/citrus run kafka-consumer.test.groovy 
+          jbang citrus@citrusframework/citrus run kafka-consumer.citrus.groovy 
           popd
           pushd knative
-          jbang citrus@citrusframework/citrus run knative-source.test.groovy 
+          jbang citrus@citrusframework/citrus run knative-source.citrus.groovy 
           popd
           pushd postgresql
-          jbang citrus@citrusframework/citrus run http-to-postgresql.test.groovy 
+          jbang citrus@citrusframework/citrus run http-to-postgresql.citrus.groovy 
           popd
           pushd aws
-          jbang citrus@citrusframework/citrus run aws-s3-consumer.test.groovy 
+          jbang citrus@citrusframework/citrus run aws-s3-consumer.citrus.groovy 
           popd
           pushd mqtt
-          jbang citrus@citrusframework/citrus run mqtt-camel.test.groovy 
+          jbang citrus@citrusframework/citrus run mqtt-camel.citrus.groovy 
           popd
 
   xml-tests:
@@ -235,26 +235,26 @@ jobs:
           echo "Running tests"
 
           pushd platform-http
-          jbang citrus@citrusframework/citrus run platform-http-server.it.xml
+          jbang citrus@citrusframework/citrus run platform-http-server.citrus.it.xml
           popd
           pushd openapi/server
-          jbang citrus@citrusframework/citrus run petstore.it.xml 
+          jbang citrus@citrusframework/citrus run petstore.citrus.it.xml 
           popd
           pushd openapi/client
-          jbang citrus@citrusframework/citrus run open-api-client.it.xml 
+          jbang citrus@citrusframework/citrus run open-api-client.citrus.it.xml 
           popd
           pushd kafka
-          jbang citrus@citrusframework/citrus run kafka-consumer.it.xml 
+          jbang citrus@citrusframework/citrus run kafka-consumer.citrus.it.xml 
           popd
           pushd knative
-          jbang citrus@citrusframework/citrus run knative-source.it.xml 
+          jbang citrus@citrusframework/citrus run knative-source.citrus.it.xml 
           popd
           pushd postgresql
-          jbang citrus@citrusframework/citrus run http-to-postgresql.it.xml 
+          jbang citrus@citrusframework/citrus run http-to-postgresql.citrus.it.xml 
           popd
           pushd aws
-          jbang citrus@citrusframework/citrus run aws-s3-consumer.it.xml 
+          jbang citrus@citrusframework/citrus run aws-s3-consumer.citrus.it.xml 
           popd
           pushd mqtt
-          jbang citrus@citrusframework/citrus run mqtt-camel.it.xml 
+          jbang citrus@citrusframework/citrus run mqtt-camel.citrus.it.xml 
           popd

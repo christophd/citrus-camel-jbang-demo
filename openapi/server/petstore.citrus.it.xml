@@ -22,12 +22,12 @@
     </camel>
 
     <openapi specification="http://localhost:8080/openapi"
-             client="http://localhost:8080/petstore">
+             client="http://localhost:8080">
       <send-request operation="getPetById"/>
     </openapi>
 
     <openapi specification="http://localhost:8080/openapi"
-             client="http://localhost:8080/petstore">
+             client="http://localhost:8080">
       <receive-response operation="getPetById" status="200"/>
     </openapi>
   </actions>

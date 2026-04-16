@@ -16,7 +16,6 @@
  */
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.DataType;
 
 public class AwsS3Consumer extends RouteBuilder {
     @Override
@@ -29,13 +28,12 @@ public class AwsS3Consumer extends RouteBuilder {
                 "uriEndpointOverride={{aws.s3.uriEndpointOverride}}&" +
                 "accessKey={{aws.s3.accessKey}}&" +
                 "secretKey={{aws.s3.secretKey}}")
-            .transform(new DataType("aws2-s3:application-cloudevents"))
             .split(body().tokenize("\n"))
             .filter(simple("${body} != \"\""))
             .setBody()
-            .simple("""
-                { "message": "${body}" }
-                """)
+                .simple("""
+                    { "message": "${body}" }
+                    """)
             .to("log:info");
     }
 }

@@ -15,48 +15,34 @@
  * limitations under the License.
  */
 
-package client
-
-import org.citrusframework.openapi.OpenApiSpecification
 import org.citrusframework.spi.Resources
 import org.springframework.http.HttpStatus
 
-import static org.citrusframework.camel.dsl.CamelSupport.camel
-import static org.citrusframework.openapi.actions.OpenApiActionBuilder.openapi
-import static org.citrusframework.script.GroovyAction.Builder.groovy
-
-name "OpenApiClientTest"
+name "PlatformHttpTest"
 description "Sample test in Groovy"
 
 given:
     variables {
-        petId = "1000"
+        username = "Christoph"
     }
 
 given:
-    $(groovy()
-        .script(Resources.create("petstoreServer.groovy"))
+    $(camel().jbang()
+        .run()
+        .integrationName("platform-http-server")
+        .integration(Resources.create("PlatformHttpServer.java"))
     )
 
 when:
-    $(camel().jbang()
-        .run()
-        .integrationName("openapi-client")
-        .integration(Resources.create("OpenApiClient.java"))
-        .addResource("petstore-api.json")
-        .withSystemProperties(Resources.create("application.properties"))
-    )
-
-OpenApiSpecification petstoreApi = OpenApiSpecification.from("petstore-api.json");
-
-then:
-    $(openapi().specification(petstoreApi)
-            .server("petstoreServer")
-            .receive("addPet")
+    $(http().client("http://localhost:8080")
+        .send()
+        .get("/hello")
+        .queryParam("name", '${username}')
     )
 
 then:
-    $(openapi().specification(petstoreApi)
-            .server("petstoreServer")
-            .send("addPet", HttpStatus.CREATED)
+    $(http().client("http://localhost:8080")
+        .receive()
+        .response(HttpStatus.OK)
+        .message().body('Hello ${username}')
     )

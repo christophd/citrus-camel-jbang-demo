@@ -13,12 +13,8 @@ actions:
         localstack:
           services:
             - "S3"
-  - camel:
-      startContext: {}
-  - camel:
-      createComponent:
-        name: amazonS3Client
-        file: amazonS3Client.groovy
+          options:
+            buckets: "${aws.s3.bucketNameOrArn}"
   - camel:
       jbang:
         run:
@@ -29,7 +25,7 @@ actions:
               file: "application.properties"
   - send:
       endpoint: |
-        camel:aws2-s3:${aws.s3.bucketNameOrArn}?amazonS3Client=#amazonS3Client
+        camel:aws2-s3:${aws.s3.bucketNameOrArn}?amazonS3Client=#s3Client
       message:
         body:
           data: "${aws.s3.message}"

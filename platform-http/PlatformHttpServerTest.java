@@ -1,13 +1,10 @@
 import org.citrusframework.GherkinTestActionRunner;
+import org.citrusframework.TestActionSupport;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.spi.Resources;
 import org.springframework.http.HttpStatus;
 
-import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariables;
-import static org.citrusframework.camel.dsl.CamelSupport.camel;
-import static org.citrusframework.http.actions.HttpActionBuilder.http;
-
-public class PlatformHttpServerTest implements Runnable {
+public class PlatformHttpServerTest implements Runnable, TestActionSupport {
 
     @CitrusResource
     GherkinTestActionRunner t;

@@ -17,7 +17,7 @@
         <run auto-remove="true">
           <integration name="knative-source" file="KnativeSource.java">
             <system-properties file="application.properties">
-              <property name="timer.message" value="citrus:urlEncode(${timer.message})"/>
+              <property name="timer.message" value="${timer.message}"/>
             </system-properties>
             <environment>
               <variable name="K_SINK" value="http://localhost:8080"/>

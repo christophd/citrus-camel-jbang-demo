@@ -1,18 +1,12 @@
 import java.util.Collections;
 
 import org.citrusframework.GherkinTestActionRunner;
+import org.citrusframework.TestActionSupport;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.kafka.message.KafkaMessage;
 import org.citrusframework.spi.Resources;
-import org.springframework.http.HttpStatus;
 
-import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariables;
-import static org.citrusframework.actions.SendMessageAction.Builder.send;
-import static org.citrusframework.camel.dsl.CamelSupport.camel;
-import static org.citrusframework.http.actions.HttpActionBuilder.http;
-import static org.citrusframework.testcontainers.actions.TestcontainersActionBuilder.testcontainers;
-
-public class KafkaConsumerTest implements Runnable {
+public class KafkaConsumerTest implements Runnable, TestActionSupport {
 
     @CitrusResource
     GherkinTestActionRunner t;
@@ -48,7 +42,8 @@ public class KafkaConsumerTest implements Runnable {
 
         t.then(
             camel().jbang()
-                    .verify("kafka-consumer")
+                    .verify()
+                    .integration("kafka-consumer")
                     .waitForLogMessage("${message}")
         );
     }

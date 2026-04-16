@@ -15,14 +15,10 @@
  * limitations under the License.
  */
 
+import org.citrusframework.actions.testcontainers.aws2.AwsService;
 import org.citrusframework.spi.Resources
-import org.citrusframework.testcontainers.aws2.LocalStackContainer
 
 import static org.apache.camel.builder.endpoint.StaticEndpointBuilders.aws2S3
-import static org.citrusframework.actions.CreateVariablesAction.Builder.createVariables
-import static org.citrusframework.actions.SendMessageAction.Builder.send
-import static org.citrusframework.camel.dsl.CamelSupport.camel
-import static org.citrusframework.testcontainers.actions.TestcontainersActionBuilder.testcontainers
 
 name "AwsS3ConsumerTest"
 description "Sample test in Groovy"
@@ -38,14 +34,9 @@ given:
     $(testcontainers()
             .localstack()
             .start()
-            .withService(LocalStackContainer.Service.S3)
+            .withOption("buckets", '${aws.s3.bucketNameOrArn}')
+            .withService(AwsService.S3)
     )
-
-given:
-    $(camel().camelContext().start())
-
-given:
-    $(camel().bind().component("amazonS3Client", Resources.create("amazonS3Client.groovy")))
 
 when:
     $(camel().jbang()
@@ -60,7 +51,7 @@ then:
             .send()
             .endpoint(aws2S3('${aws.s3.bucketNameOrArn}')
                         .advanced()
-                        .amazonS3Client('#amazonS3Client')::getRawUri)
+                        .amazonS3Client('#s3Client')::getRawUri)
             .message()
             .body('${aws.s3.message}')
             .header("CamelAwsS3Key", '${aws.s3.key}')
@@ -68,7 +59,8 @@ then:
 
 then:
     $(camel().jbang()
-            .verify("aws-s3-consumer")
+            .verify()
+            .integration("aws-s3-consumer")
             .waitForLogMessage('''
                 Body: { "message": "${aws.s3.message}" }
                 ''')

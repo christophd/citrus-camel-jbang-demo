@@ -8,7 +8,9 @@
   </variables>
 
   <actions>
-    <groovy file="petstoreServer.groovy"/>
+    <groovy>
+      <script file="petstoreServer.groovy"/>
+    </groovy>
 
     <camel>
       <jbang>
